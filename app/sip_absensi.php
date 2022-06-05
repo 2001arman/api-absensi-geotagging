@@ -17,6 +17,7 @@ class sip_absensi extends Model
         "jam_pulang",
         "jam_datang_jadwal",
         "jam_pulang_jadwal",
+        "terlambat",
     ];
     
     public function user(){

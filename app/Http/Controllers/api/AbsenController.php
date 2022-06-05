@@ -11,8 +11,16 @@ class AbsenController extends Controller
 {
     public function index(Request $request)
     {
-        $data = sip_absensi::where('user',$request->username)->get();
-        return $data;
+
+        $data = sip_absensi::select('user','tanggal', 'jam_datang', 'jam_datang_jadwal', 'terlambat')
+        ->where('user',$request->username)->get();
+        $response = [
+            'status' => 'success',
+            'msg' => 'berhasil ambil data absen',
+            'errors' => 'kosong',
+            'content' => $data,
+            ];
+        return response()->json($response);
     }
 
     public function tambahAbsen(Request $request)
@@ -25,30 +33,49 @@ class AbsenController extends Controller
             'tanggal' => $tanggal
         ])->get();
 
+        // dd($data);
+
         if($data->isEmpty()){
-            $absen = sip_absensi::create([
-                'user' => $request->username,
-                'jam_datang' => $time,
-                'tanggal' => $tanggal,
-                'jam_datang_jadwal' => '08:00',
-                'jam_pulang_jadwal' => '16:00',
-            ]);
+            if($time >= '08:00'){
+                $absen = sip_absensi::create([
+                    'user' => $request->username,
+                    'jam_datang' => $time,
+                    'tanggal' => $tanggal,
+                    'jam_datang_jadwal' => '08:00',
+                    'jam_pulang_jadwal' => '16:00',
+                    'terlambat' => 'true',
+                ]);
+            } else{
+                $absen = sip_absensi::create([
+                    'user' => $request->username,
+                    'jam_datang' => $time,
+                    'tanggal' => $tanggal,
+                    'jam_datang_jadwal' => '08:00',
+                    'jam_pulang_jadwal' => '16:00',
+                    'terlambat' => 'false',
+                ]);
+            }
+            
 
             $respon = [
                 'status' => 'success',
                 'msg' => 'Berhasil Absen',
                 'errors' => "kosong",
                 'content' => [
-                    'username' => $absen->user,
+                    [
+                    'user' => $absen->user,
+                    'tanggal' => $absen->tanggal,
                     'jam_datang' => $absen->jam_datang,
-                ]
+                    'jam_datang_jadwal' => $absen->jam_datang_jadwal,
+                    'terlambat' => $absen->terlambat,
+                    ],],
             ];
-        } else{
+        } else {
             $respon = [
                 'status' => 'error',
                 'msg' => 'Anda Sudah Absen',
                 'errors' => "Anda sudah absen hari ini",
-                'content' => "kosong",
+                'content' => [],
                 ];
         }
         return response()->json($respon);
