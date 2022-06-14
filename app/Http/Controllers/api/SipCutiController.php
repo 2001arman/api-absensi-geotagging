@@ -26,7 +26,16 @@ class SipCutiController extends Controller
             'tanggal_mulai_cuti' =>  $request->tanggal_mulai_cuti,
             'tanggal_akhir_cuti' => $request->tanggal_akhir_cuti,
         ]);
-        return response()->json();
+
+        $respon = [
+            'status' => 'success',
+            'msg' => 'Berhasil mengajukan cuti',
+            'errors' => null,
+            'content' => [
+                'status_code' => 200,
+            ]
+        ];
+        return response()->json($respon);
     }
 
     public function hapusCuti($id)
