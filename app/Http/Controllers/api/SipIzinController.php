@@ -25,7 +25,15 @@ class SipIzinController extends Controller
             'tanggal' =>  $request->tanggal,
             'approve' => 0,
         ]);
-        return response()->json();
+        $respon = [
+            'status' => 'success',
+            'msg' => 'Berhasil mengajukan izin',
+            'errors' => null,
+            'content' => [
+                'status_code' => 200,
+            ]
+        ];
+        return response()->json($respon);
     }
 
     public function hapusizin($id)
